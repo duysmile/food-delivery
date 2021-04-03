@@ -24,13 +24,22 @@
 - As an user, I can logout
 
 ### Restaurant Owners
-- As an restaurant owners, I can login
-- As an restaurant owners, I can sign up 
-- As an restaurant owners, I can manage restaurant, edit information, edit menu, add event, promotion
-- As an restaurant owners, I can receive notification about new order
-- As an restaurant owners, I can browser all upcoming order
-- As an restaurant owners, I can receive notification about review
-- As an restaurant owners, I can add new food item
-- As an restaurant owners, I can change food item price
-- As an restaurant owners, I can close restaurant
-- As an restaurant owners, I can logout
+- As a restaurant owners, I can login
+- As a restaurant owners, I can sign up 
+- As a restaurant owners, I can manage restaurant, edit information, edit menu, add event, promotion
+- As a restaurant owners, I can receive notification about new order
+- As a restaurant owners, I can browser all upcoming order
+- As a restaurant owners, I can receive notification about review
+- As a restaurant owners, I can add new food item
+- As a restaurant owners, I can change food item price
+- As a restaurant owners, I can close restaurant
+- As a restaurant owners, I can logout
+### Shipper
+- As a shipper, I can signup
+- As a shipper, I can login
+- As a shipper, I can receive notification when has new order
+- As a shipper, I can see information order, includes price, address, map
+- As a shipper, I can reject upcoming order
+- As a shipper, I can approve upcoming order
+- As a shipper, I can mark order as delivered
+- As a shipper, I can logout
