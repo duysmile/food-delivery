@@ -4,8 +4,6 @@ import (
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"log"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -44,22 +42,7 @@ func runService(db *gorm.DB) error {
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
 		restaurants.GET("", ginrestaurant.ListRestaurantByCondition(appCtx))
-		restaurants.GET("/:id", func(c *gin.Context) {
-			id, err := strconv.Atoi(c.Param("id"))
-			if err != nil {
-
-			}
-			var data Restaurant
-
-			if err := db.Where("id = ?", id).First(&data).Error; err != nil {
-				c.JSON(401, map[string]interface{}{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			c.JSON(http.StatusOK, data)
-		})
+		restaurants.GET("/:id", ginrestaurant.GetRestaurantById(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
