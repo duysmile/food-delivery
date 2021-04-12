@@ -2,6 +2,7 @@ package main
 
 import (
 	"200lab/food-delivery/component"
+	"200lab/food-delivery/middleware"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"log"
 
@@ -37,6 +38,8 @@ func runService(db *gorm.DB) error {
 	})
 
 	appCtx := component.NewAppContext(db)
+
+	r.Use(middleware.Recover(appCtx))
 
 	restaurants := r.Group("/restaurants")
 	{
