@@ -4,7 +4,7 @@ import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/modules/restaurant/restaurantbiz"
-	restarantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
+	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"200lab/food-delivery/modules/restaurant/restaurantstorage"
 	"net/http"
 
@@ -13,9 +13,9 @@ import (
 
 func ListRestaurantByCondition(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var filter restarantmodel.Filter
+		var filter restaurantmodel.Filter
 		var paging common.Paging
-		var result []restarantmodel.Restaurant
+		var result []restaurantmodel.Restaurant
 
 		if err := c.ShouldBind(&filter); err != nil {
 			panic(common.ErrInvalidRequest(err))
