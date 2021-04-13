@@ -4,7 +4,7 @@ import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/modules/restaurant/restaurantbiz"
-	restarantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
+	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"200lab/food-delivery/modules/restaurant/restaurantstorage"
 	"net/http"
 
@@ -13,7 +13,7 @@ import (
 
 func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var data restarantmodel.RestaurantCreate
+		var data restaurantmodel.RestaurantCreate
 
 		if err := c.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))

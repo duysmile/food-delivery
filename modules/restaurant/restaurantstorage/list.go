@@ -2,23 +2,23 @@ package restaurantstorage
 
 import (
 	"200lab/food-delivery/common"
-	restarantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
+	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
 )
 
 func (s *sqlStore) ListByCondition(ctx context.Context,
 	conditions map[string]interface{},
-	filter *restarantmodel.Filter,
+	filter *restaurantmodel.Filter,
 	paging *common.Paging,
 	moreKeys ...string,
-) ([]restarantmodel.Restaurant, error) {
+) ([]restaurantmodel.Restaurant, error) {
 	db := s.db
 
 	for key := range moreKeys {
 		db = db.Preload(moreKeys[key])
 	}
 
-	db = db.Table(restarantmodel.Restaurant{}.TableName()).Where(conditions)
+	db = db.Table(restaurantmodel.Restaurant{}.TableName()).Where(conditions)
 
 	if v := filter; v != nil {
 		if v.CityId > 0 {
@@ -27,17 +27,17 @@ func (s *sqlStore) ListByCondition(ctx context.Context,
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
-		return nil, err
+		return nil, common.ErrDB(err)
 	}
 
-	var result []restarantmodel.Restaurant
+	var result []restaurantmodel.Restaurant
 	if err := db.
 		Offset((paging.Page - 1) * paging.Limit).
 		Limit(paging.Limit).
 		Order("id desc").
 		Find(&result).
 		Error; err != nil {
-		return nil, err
+		return nil, common.ErrDB(err)
 	}
 
 	return result, nil

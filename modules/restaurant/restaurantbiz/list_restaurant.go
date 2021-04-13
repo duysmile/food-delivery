@@ -2,17 +2,17 @@ package restaurantbiz
 
 import (
 	"200lab/food-delivery/common"
-	restarantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
+	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
 )
 
 type ListUserStore interface {
 	ListByCondition(ctx context.Context,
 		conditions map[string]interface{},
-		filter *restarantmodel.Filter,
+		filter *restaurantmodel.Filter,
 		paging *common.Paging,
 		moreKeys ...string,
-	) ([]restarantmodel.Restaurant, error)
+	) ([]restaurantmodel.Restaurant, error)
 }
 
 type listUserBiz struct {
@@ -25,12 +25,16 @@ func NewListUserBiz(store ListUserStore) *listUserBiz {
 
 func (biz *listUserBiz) ListUserBiz(ctx context.Context,
 	conditions map[string]interface{},
-	filter *restarantmodel.Filter,
+	filter *restaurantmodel.Filter,
 	paging *common.Paging,
 	moreKeys ...string,
-) ([]restarantmodel.Restaurant, error) {
-	var result []restarantmodel.Restaurant
+) ([]restaurantmodel.Restaurant, error) {
+	var result []restaurantmodel.Restaurant
 
 	result, err := biz.store.ListByCondition(ctx, nil, filter, paging)
-	return result, err
+	if err != nil {
+		return nil, common.ErrCannotListEntity(restaurantmodel.EntityName, err)
+	}
+
+	return result, nil
 }

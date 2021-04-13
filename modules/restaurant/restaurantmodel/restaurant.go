@@ -1,5 +1,5 @@
 // Business Model
-package restarantmodel
+package restaurantmodel
 
 import (
 	"200lab/food-delivery/common"
@@ -19,12 +19,20 @@ func (Restaurant) TableName() string {
 }
 
 type RestaurantCreate struct {
-	Id   int    `json:"id" gorm:"column:id;"`
+	Name string `json:"name" gorm:"column:name;"`
+	Addr string `json:"address" gorm:"column:addr;"`
+}
+
+type RestaurantUpdate struct {
 	Name string `json:"name" gorm:"column:name;"`
 	Addr string `json:"address" gorm:"column:addr;"`
 }
 
 func (RestaurantCreate) TableName() string {
+	return Restaurant{}.TableName()
+}
+
+func (RestaurantUpdate) TableName() string {
 	return Restaurant{}.TableName()
 }
 
