@@ -1,10 +1,13 @@
 package main
 
 import (
+	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/middleware"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
+	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -41,6 +44,41 @@ func runService(db *gorm.DB) error {
 
 	r.Use(middleware.Recover(appCtx))
 
+	r.POST("/upload", func(c *gin.Context) {
+		fileHeader, err := c.FormFile("file")
+
+		if err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+
+		folder := c.DefaultPostForm("folder", "static/img")
+
+		file, err := fileHeader.Open()
+
+		if err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+
+		defer file.Close()
+
+		dataBytes := make([]byte, fileHeader.Size)
+
+		if _, err := file.Read(dataBytes); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+
+		fileName := fileHeader.Filename
+		destination := fmt.Sprintf("./%s/%s", folder, fileName)
+		log.Println(destination)
+		errUpload := c.SaveUploadedFile(fileHeader, destination)
+		if errUpload != nil {
+			c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"error": errUpload,
+			})
+			return
+		}
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(destination))
+	})
 	restaurants := r.Group("/restaurants")
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
