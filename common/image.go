@@ -9,7 +9,7 @@ import (
 
 type Image struct {
 	Id        int    `json:"id" gorm:"column:id;"`
-	Url       int    `json:"url" gorm:"column:url;"`
+	Url       string `json:"url" gorm:"column:url;"`
 	Width     int    `json:"width" gorm:"column:width;"`
 	Height    int    `json:"height" gorm:"column:height"`
 	CloudName string `json:"cloud_name,omitempty" gorm:"-"`
@@ -52,8 +52,8 @@ func (i *Images) Scan(value interface{}) error {
 		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value: ", value))
 	}
 
-	var imgs Images
-	if err := json.Unmarshal(bytes, *imgs); err != nil {
+	var imgs []Image
+	if err := json.Unmarshal(bytes, &imgs); err != nil {
 		return err
 	}
 

@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"image"
+	_ "image/jpeg"
 	"io"
 	"log"
 	"path/filepath"
@@ -57,9 +58,9 @@ func (biz *uploadBiz) Upload(ctx context.Context, data []byte, folder, fileName 
 	img.Height = h
 	img.Extension = fileExt
 
-	if err := biz.imgStore.CreateImage(ctx, img); err != nil {
-		return nil, err
-	}
+	// if err := biz.imgStore.CreateImage(ctx, img); err != nil {
+	// 	return nil, err
+	// }
 
 	return img, nil
 }

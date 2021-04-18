@@ -8,6 +8,11 @@ import (
 
 type Env struct {
 	DBConnectionStr string
+	S3BucketName    string
+	S3Region        string
+	S3APIKey        string
+	S3Secret        string
+	S3Domain        string
 }
 
 func checkEnvFile(file string) error {
@@ -26,6 +31,11 @@ func Init() Env {
 	}
 
 	var env Env
-	env.DBConnectionStr = getEnvVar("DBConnectionStr")
+	env.DBConnectionStr = getEnvVar("DB_CONNECTION")
+	env.S3BucketName = getEnvVar("S3_BUCKET_NAME")
+	env.S3Region = getEnvVar("S3_REGION")
+	env.S3APIKey = getEnvVar("S3_API_KEY")
+	env.S3Secret = getEnvVar("S3_SECRET")
+	env.S3Domain = getEnvVar("S3_DOMAIN")
 	return env
 }
