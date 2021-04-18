@@ -1,13 +1,12 @@
 package main
 
 import (
-	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
+	"200lab/food-delivery/component/uploadprovider"
 	"200lab/food-delivery/middleware"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
-	"fmt"
+	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -27,12 +26,20 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	if err := runService(db); err != nil {
+	provider := uploadprovider.NewS3Provider(
+		env.S3BucketName,
+		env.S3Region,
+		env.S3APIKey,
+		env.S3Secret,
+		env.S3Domain,
+	)
+
+	if err := runService(db, provider); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func runService(db *gorm.DB) error {
+func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -40,45 +47,11 @@ func runService(db *gorm.DB) error {
 		})
 	})
 
-	appCtx := component.NewAppContext(db)
+	appCtx := component.NewAppContext(db, provider)
 
 	r.Use(middleware.Recover(appCtx))
 
-	r.POST("/upload", func(c *gin.Context) {
-		fileHeader, err := c.FormFile("file")
-
-		if err != nil {
-			panic(common.ErrInvalidRequest(err))
-		}
-
-		folder := c.DefaultPostForm("folder", "static/img")
-
-		file, err := fileHeader.Open()
-
-		if err != nil {
-			panic(common.ErrInvalidRequest(err))
-		}
-
-		defer file.Close()
-
-		dataBytes := make([]byte, fileHeader.Size)
-
-		if _, err := file.Read(dataBytes); err != nil {
-			panic(common.ErrInvalidRequest(err))
-		}
-
-		fileName := fileHeader.Filename
-		destination := fmt.Sprintf("./%s/%s", folder, fileName)
-		log.Println(destination)
-		errUpload := c.SaveUploadedFile(fileHeader, destination)
-		if errUpload != nil {
-			c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"error": errUpload,
-			})
-			return
-		}
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(destination))
-	})
+	r.POST("/upload", ginupload.UploadImage(appCtx))
 	restaurants := r.Group("/restaurants")
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
