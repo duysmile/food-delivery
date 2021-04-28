@@ -21,10 +21,11 @@ func (Restaurant) TableName() string {
 }
 
 type RestaurantCreate struct {
-	Name  string         `json:"name" gorm:"column:name;"`
-	Addr  string         `json:"address" gorm:"column:addr;"`
-	Cover *common.Images `json:"cover" gorm:"column:cover;"`
-	Logo  *common.Image  `json:"logo" gorm:"column:logo;"`
+	common.SQLModel `json:",inline`
+	Name            string         `json:"name" gorm:"column:name;"`
+	Addr            string         `json:"address" gorm:"column:addr;"`
+	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
+	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
 }
 
 type RestaurantUpdate struct {
@@ -54,3 +55,7 @@ func (res *RestaurantCreate) Validate() error {
 var (
 	ErrNameCannotBeEmpty = common.NewCustomError(nil, "restaurant can't be blank", "ErrNameCannotBeBlank")
 )
+
+func (data *Restaurant) Mask(isAdminOrOwner bool) {
+	data.GenUID(common.DbTypeRestaurant)
+}

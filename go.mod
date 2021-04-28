@@ -4,9 +4,10 @@ go 1.16
 
 require (
 	github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6 // indirect
-	github.com/aws/aws-sdk-go v1.38.21 // indirect
+	github.com/aws/aws-sdk-go v1.38.21
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/coreos/go-etcd v2.0.0+incompatible // indirect
-	github.com/gin-gonic/gin v1.6.3 // indirect
+	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.5.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -21,5 +22,5 @@ require (
 	golang.org/x/text v0.3.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/driver/mysql v1.0.3 // indirect
-	gorm.io/gorm v1.21.6 // indirect
+	gorm.io/gorm v1.21.6
 )
