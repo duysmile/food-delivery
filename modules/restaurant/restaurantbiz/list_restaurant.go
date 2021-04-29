@@ -4,6 +4,7 @@ import (
 	"200lab/food-delivery/common"
 	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
+	"log"
 )
 
 type ListUserStore interface {
@@ -15,12 +16,17 @@ type ListUserStore interface {
 	) ([]restaurantmodel.Restaurant, error)
 }
 
-type listUserBiz struct {
-	store ListUserStore
+type LikeStore interface {
+	GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error)
 }
 
-func NewListUserBiz(store ListUserStore) *listUserBiz {
-	return &listUserBiz{store: store}
+type listUserBiz struct {
+	store     ListUserStore
+	likeStore LikeStore
+}
+
+func NewListUserBiz(store ListUserStore, likeStore LikeStore) *listUserBiz {
+	return &listUserBiz{store: store, likeStore: likeStore}
 }
 
 func (biz *listUserBiz) ListUserBiz(ctx context.Context,
@@ -34,6 +40,23 @@ func (biz *listUserBiz) ListUserBiz(ctx context.Context,
 	result, err := biz.store.ListByCondition(ctx, nil, filter, paging)
 	if err != nil {
 		return nil, common.ErrCannotListEntity(restaurantmodel.EntityName, err)
+	}
+
+	ids := make([]int, len(result))
+
+	for i := range result {
+		ids[i] = result[i].Id
+	}
+
+	mapResLike, err := biz.likeStore.GetRestaurantLikes(ctx, ids)
+	if err != nil {
+		log.Println("cannot get restaurant likes:", err)
+	}
+
+	if v := mapResLike; v != nil {
+		for i, item := range result {
+			result[i].LikeCount = mapResLike[item.Id]
+		}
 	}
 
 	return result, nil
