@@ -6,6 +6,7 @@ import (
 	"200lab/food-delivery/middleware"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
+	"200lab/food-delivery/modules/user/usertransport/ginuser"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -54,6 +55,10 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 	v1 := r.Group("/v1")
 
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
+
+	v1.POST("/register", ginuser.RegisterUser(appCtx))
+	v1.POST("/login", ginuser.Login(appCtx))
+
 	restaurants := v1.Group("/restaurants")
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
