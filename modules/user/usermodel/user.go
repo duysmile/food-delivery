@@ -19,6 +19,22 @@ type User struct {
 	Avatar          *common.Image `json:"avatar,omitempty" gorm:"column:avatar;type:json"`
 }
 
+func (u *User) GetUserId() int {
+	return u.Id
+}
+
+func (u *User) GetEmail() string {
+	return u.Email
+}
+
+func (u *User) GetRole() string {
+	return u.Role
+}
+
+func (u *User) Mask(isAdmin bool) {
+	u.GenUID(common.DbTypeUser)
+}
+
 type UserCreate struct {
 	common.SQLModel `json:",inline`
 	Email           string        `json:"email" gorm:"column:email;"`

@@ -21,7 +21,7 @@ func Login(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		tokenProvider := jwt.NewTokenProvider(appCtx.GetSecretKey())
+		tokenProvider := jwt.NewTokenJWTProvider(appCtx.GetSecretKey())
 		store := userstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		md5 := hasher.NewMd5Hash()
 

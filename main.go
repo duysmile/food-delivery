@@ -58,6 +58,7 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/login", ginuser.Login(appCtx))
+	v1.GET("/profile", middleware.RequireAuth(appCtx), ginuser.GetProfileUser(appCtx))
 
 	restaurants := v1.Group("/restaurants")
 	{
