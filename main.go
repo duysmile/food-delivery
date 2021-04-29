@@ -51,8 +51,10 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 
 	r.Use(middleware.Recover(appCtx))
 
-	r.POST("/upload", ginupload.UploadImage(appCtx))
-	restaurants := r.Group("/restaurants")
+	v1 := r.Group("/v1")
+
+	v1.POST("/upload", ginupload.UploadImage(appCtx))
+	restaurants := v1.Group("/restaurants")
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
 		restaurants.GET("", ginrestaurant.ListRestaurantByCondition(appCtx))

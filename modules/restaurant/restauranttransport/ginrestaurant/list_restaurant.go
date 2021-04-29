@@ -6,6 +6,7 @@ import (
 	"200lab/food-delivery/modules/restaurant/restaurantbiz"
 	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"200lab/food-delivery/modules/restaurant/restaurantstorage"
+	"200lab/food-delivery/modules/restaurantlike/restaurantlikestorage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,8 @@ func ListRestaurantByCondition(appCtx component.AppContext) gin.HandlerFunc {
 		paging.Fulfill()
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantbiz.NewListUserBiz(store)
+		likeStore := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := restaurantbiz.NewListUserBiz(store, likeStore)
 
 		result, err := biz.ListUserBiz(c.Request.Context(), nil, &filter, &paging)
 
