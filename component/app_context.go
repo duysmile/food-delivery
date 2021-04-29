@@ -9,11 +9,13 @@ import (
 type AppContext interface {
 	GetMainDBConnection() *gorm.DB
 	GetUploadProvider() uploadprovider.UploadProvider
+	GetSecretKey() string
 }
 
 type appCtx struct {
 	db             *gorm.DB
 	uploadProvider uploadprovider.UploadProvider
+	secretKey      string
 }
 
 func NewAppContext(db *gorm.DB, uploadProvider uploadprovider.UploadProvider) *appCtx {
@@ -26,4 +28,8 @@ func (ctx *appCtx) GetMainDBConnection() *gorm.DB {
 
 func (ctx *appCtx) GetUploadProvider() uploadprovider.UploadProvider {
 	return ctx.uploadProvider
+}
+
+func (ctx *appCtx) GetSecretKey() string {
+	return ctx.secretKey
 }

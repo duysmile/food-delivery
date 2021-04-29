@@ -3,6 +3,7 @@ package ginuser
 import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
+	"200lab/food-delivery/component/hasher"
 	"200lab/food-delivery/modules/user/userbiz"
 	"200lab/food-delivery/modules/user/usermodel"
 	"200lab/food-delivery/modules/user/userstorage"
@@ -11,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateUser(appCtx component.AppContext) gin.HandlerFunc {
+func RegisterUser(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var data usermodel.UserCreate
 
@@ -20,12 +21,15 @@ func CreateUser(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := userstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := userbiz.NewCreateUserBiz(store)
+		md5 := hasher.NewMd5Hash()
+		biz := userbiz.NewRegisterBiz(store, md5)
 
-		if err := biz.CreateUser(ctx.Request.Context(), &data); err != nil {
+		if err := biz.Register(ctx.Request.Context(), &data); err != nil {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
+		data.Mask(false)
+
+		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(data.FakeId.String()))
 	}
 }
