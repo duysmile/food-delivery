@@ -10,16 +10,41 @@ type CreateRestaurantStore interface {
 	Create(ctx context.Context, data *restaurantmodel.RestaurantCreate) error
 }
 
-type createRestaurantBiz struct {
-	store CreateRestaurantStore
+type FindImageStore interface {
+	FindImageByCondition(
+		ctx context.Context,
+		conditions map[string]interface{},
+		moreInfo ...string,
+	) (*common.Image, error)
+	ListImages(
+		ctx context.Context,
+		ids []int,
+		moreKeys ...string,
+	) ([]common.Image, error)
 }
 
-func NewCreateRestaurantBiz(store CreateRestaurantStore) *createRestaurantBiz {
-	return &createRestaurantBiz{store: store}
+type createRestaurantBiz struct {
+	store      CreateRestaurantStore
+	imageStore FindImageStore
+}
+
+func NewCreateRestaurantBiz(store CreateRestaurantStore, imageStore FindImageStore) *createRestaurantBiz {
+	return &createRestaurantBiz{
+		store:      store,
+		imageStore: imageStore,
+	}
 }
 
 func (biz *createRestaurantBiz) CreateRestaurant(ctx context.Context, data *restaurantmodel.RestaurantCreate) error {
 	if err := data.Validate(); err != nil {
+		return err
+	}
+
+	if err := data.Logo.Validate(ctx, biz.imageStore); err != nil {
+		return err
+	}
+
+	if err := data.Cover.Validate(ctx, biz.imageStore); err != nil {
 		return err
 	}
 

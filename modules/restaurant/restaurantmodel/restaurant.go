@@ -9,12 +9,17 @@ import (
 const EntityName = "Restaurant"
 
 type Restaurant struct {
-	common.SQLModel `json:",inline"`
-	Name            string         `json:"name" gorm:"column:name;"`
-	Addr            string         `json:"address" gorm:"column:addr;"`
-	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
-	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
-	LikeCount       int            `json:"like_count" gorm:"-"`
+	common.SQLModel  `json:",inline"`
+	OwnerId          int            `json:"owner_id" gorm:"column:owner_id;"`
+	Name             string         `json:"name" gorm:"column:name;"`
+	Addr             string         `json:"address" gorm:"column:addr;"`
+	CityId           int            `json:"city_id" gorm:"column:city_id;"`
+	Lat              float32        `json:"lat" gorm:"column:lat;"`
+	Long             float32        `json:"lng" gorm:"column:lng;"`
+	ShippingFeePerKm float64        `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
+	Cover            *common.Images `json:"cover" gorm:"column:cover;"`
+	Logo             *common.Image  `json:"logo" gorm:"column:logo;"`
+	LikeCount        int            `json:"like_count" gorm:"-"`
 }
 
 func (Restaurant) TableName() string {
@@ -22,18 +27,27 @@ func (Restaurant) TableName() string {
 }
 
 type RestaurantCreate struct {
-	common.SQLModel `json:",inline`
-	Name            string         `json:"name" gorm:"column:name;"`
-	Addr            string         `json:"address" gorm:"column:addr;"`
-	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
-	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
+	common.SQLModel  `json:",inline`
+	OwnerId          int            `json:"owner_id" gorm:"column:owner_id;"`
+	Name             string         `json:"name" gorm:"column:name;"`
+	Addr             string         `json:"address" gorm:"column:addr;"`
+	CityId           int            `json:"city_id" gorm:"column:city_id;"`
+	Lat              float32        `json:"lat" gorm:"column:lat;"`
+	Long             float32        `json:"lng" gorm:"column:lng;"`
+	ShippingFeePerKm float64        `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
+	Cover            *common.Images `json:"cover" gorm:"column:cover;"`
+	Logo             *common.Image  `json:"logo" gorm:"column:logo;"`
 }
 
 type RestaurantUpdate struct {
-	Name  string         `json:"name" gorm:"column:name;"`
-	Addr  string         `json:"address" gorm:"column:addr;"`
-	Cover *common.Images `json:"cover" gorm:"column:cover;"`
-	Logo  *common.Image  `json:"logo" gorm:"column:logo;"`
+	Name             string         `json:"name" gorm:"column:name;"`
+	Addr             string         `json:"address" gorm:"column:addr;"`
+	CityId           int            `json:"city_id" gorm:"column:city_id;"`
+	Lat              float32        `json:"lat" gorm:"column:lat;"`
+	Long             float32        `json:"lng" gorm:"column:lng;"`
+	ShippingFeePerKm float64        `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
+	Cover            *common.Images `json:"cover" gorm:"column:cover;"`
+	Logo             *common.Image  `json:"logo" gorm:"column:logo;"`
 }
 
 func (RestaurantCreate) TableName() string {

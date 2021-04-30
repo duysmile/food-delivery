@@ -4,6 +4,7 @@ import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/modules/upload/uploadbiz"
+	"200lab/food-delivery/modules/upload/uploadstorage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -33,6 +34,7 @@ func UploadImage(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		// Store image directly to server
 		// fileName := fileHeader.Filename
 		// destination := fmt.Sprintf("./%s/%s", folder, fileName)
 		// log.Println(destination)
@@ -44,8 +46,8 @@ func UploadImage(appCtx component.AppContext) gin.HandlerFunc {
 		// 	return
 		// }
 
-		// imgStore := uploadstorage.NewSQLStore(db)
-		biz := uploadbiz.NewUploadBiz(appCtx.GetUploadProvider(), nil)
+		imgStore := uploadstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := uploadbiz.NewUploadBiz(appCtx.GetUploadProvider(), imgStore)
 		img, err := biz.Upload(c.Request.Context(), dataBytes, folder, fileHeader.Filename)
 
 		if err != nil {

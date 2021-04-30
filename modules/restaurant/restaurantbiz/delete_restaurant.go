@@ -4,6 +4,7 @@ import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
+	"errors"
 )
 
 type DeleteRestaurantStore interface {
@@ -23,7 +24,11 @@ func NewDeleteRestaurantBiz(store DeleteRestaurantStore) *deleteRestaurantBiz {
 	return &deleteRestaurantBiz{store: store}
 }
 
-func (biz *deleteRestaurantBiz) DeleteRestaurant(ctx context.Context, id int) error {
+func (biz *deleteRestaurantBiz) DeleteRestaurant(
+	ctx context.Context,
+	id int,
+	userId int,
+) error {
 	store := biz.store
 
 	oldData, err := store.FindDataByCondition(ctx, map[string]interface{}{"id": id})
@@ -34,6 +39,10 @@ func (biz *deleteRestaurantBiz) DeleteRestaurant(ctx context.Context, id int) er
 
 	if oldData.Status == 0 {
 		return common.ErrEntityDeleted(restaurantmodel.EntityName, nil)
+	}
+
+	if userId != oldData.OwnerId {
+		panic(common.ErrNoPermission(errors.New("userId is not match ownerId")))
 	}
 
 	if err := store.SoftDelete(ctx, id); err != nil {

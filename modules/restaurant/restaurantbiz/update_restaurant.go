@@ -4,6 +4,7 @@ import (
 	"200lab/food-delivery/common"
 	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
+	"errors"
 )
 
 type UpdateRestaurantStore interface {
@@ -30,6 +31,7 @@ func NewUpdateRestaurantBiz(store UpdateRestaurantStore) *updateRestaurantBiz {
 func (biz *updateRestaurantBiz) UpdateRestaurant(
 	ctx context.Context,
 	id int,
+	userId int,
 	data *restaurantmodel.RestaurantUpdate,
 ) error {
 	store := biz.store
@@ -41,6 +43,10 @@ func (biz *updateRestaurantBiz) UpdateRestaurant(
 
 	if oldData.Status == 0 {
 		return common.ErrEntityNotFound(restaurantmodel.EntityName, nil)
+	}
+
+	if userId != oldData.OwnerId {
+		panic(common.ErrNoPermission(errors.New("userId is not match ownerId")))
 	}
 
 	if err := store.UpdateRestaurant(ctx, id, data); err != nil {

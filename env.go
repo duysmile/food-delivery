@@ -13,6 +13,7 @@ type Env struct {
 	S3APIKey        string
 	S3Secret        string
 	S3Domain        string
+	SecretKeyJWT    string
 }
 
 func checkEnvFile(file string) error {
@@ -37,5 +38,6 @@ func Init() Env {
 	env.S3APIKey = getEnvVar("S3_API_KEY")
 	env.S3Secret = getEnvVar("S3_SECRET")
 	env.S3Domain = getEnvVar("S3_DOMAIN")
+	env.SecretKeyJWT = getEnvVar("SECRET_KEY_JWT")
 	return env
 }

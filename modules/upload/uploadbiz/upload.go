@@ -58,9 +58,10 @@ func (biz *uploadBiz) Upload(ctx context.Context, data []byte, folder, fileName 
 	img.Height = h
 	img.Extension = fileExt
 
-	// if err := biz.imgStore.CreateImage(ctx, img); err != nil {
-	// 	return nil, err
-	// }
+	if err := biz.imgStore.CreateImage(ctx, img); err != nil {
+		// delete img on S3
+		return nil, uploadmodel.ErrCannotSaveFile(err)
+	}
 
 	return img, nil
 }
