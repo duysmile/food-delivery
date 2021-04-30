@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
@@ -67,4 +68,53 @@ func (i *Images) Value() (driver.Value, error) {
 	}
 
 	return json.Marshal(i)
+}
+
+type ImageStore interface {
+	FindImageByCondition(ctx context.Context, conditions map[string]interface{}, moreInfo ...string) (*Image, error)
+}
+
+type ImagesStore interface {
+	ListImages(ctx context.Context, ids []int, moreKeys ...string) ([]Image, error)
+}
+
+func (i *Image) Validate(ctx context.Context, imageStore ImageStore) error {
+	if i != nil {
+		image, _ := imageStore.FindImageByCondition(ctx, map[string]interface{}{"id": i.Id})
+		return i.ValidateData(image)
+	}
+
+	return nil
+}
+
+func (i *Image) ValidateData(j *Image) error {
+	if j.Url != i.Url {
+		return ErrInvalidRequest(errors.New("image is not existed"))
+	}
+
+	return nil
+}
+
+func (i *Images) Validate(ctx context.Context, imagesStore ImagesStore) error {
+	images := []Image(*i)
+	ids := make([]int, len(images))
+
+	for index := range images {
+		ids[index] = images[index].Id
+	}
+
+	if i != nil {
+		listImage, _ := imagesStore.ListImages(ctx, ids)
+		if len(listImage) != len(ids) {
+			return ErrInvalidRequest(errors.New("image list is not enough"))
+		}
+
+		for index := range listImage {
+			if err := listImage[index].ValidateData(&images[index]); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

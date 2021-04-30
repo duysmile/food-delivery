@@ -18,8 +18,12 @@ type appCtx struct {
 	secretKey      string
 }
 
-func NewAppContext(db *gorm.DB, uploadProvider uploadprovider.UploadProvider) *appCtx {
-	return &appCtx{db: db, uploadProvider: uploadProvider}
+func NewAppContext(
+	db *gorm.DB,
+	uploadProvider uploadprovider.UploadProvider,
+	secretKey string,
+) *appCtx {
+	return &appCtx{db: db, uploadProvider: uploadProvider, secretKey: secretKey}
 }
 
 func (ctx *appCtx) GetMainDBConnection() *gorm.DB {

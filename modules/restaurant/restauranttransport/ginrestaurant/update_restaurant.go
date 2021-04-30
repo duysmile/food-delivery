@@ -23,9 +23,16 @@ func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		user := c.MustGet(common.CurrentUser).(common.Requester)
+
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		biz := restaurantbiz.NewUpdateRestaurantBiz(store)
-		if err := biz.UpdateRestaurant(c.Request.Context(), int(uid.GetLocalID()), &data); err != nil {
+		if err := biz.UpdateRestaurant(
+			c.Request.Context(),
+			int(uid.GetLocalID()),
+			int(user.GetUserId()),
+			&data,
+		); err != nil {
 			panic(err)
 		}
 

@@ -35,12 +35,16 @@ func main() {
 		env.S3Domain,
 	)
 
-	if err := runService(db, provider); err != nil {
+	if err := runService(db, provider, env.SecretKeyJWT); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
+func runService(
+	db *gorm.DB,
+	provider uploadprovider.UploadProvider,
+	secretKey string,
+) error {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -48,7 +52,7 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 		})
 	})
 
-	appCtx := component.NewAppContext(db, provider)
+	appCtx := component.NewAppContext(db, provider, secretKey)
 
 	r.Use(middleware.Recover(appCtx))
 
@@ -62,11 +66,11 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 
 	restaurants := v1.Group("/restaurants")
 	{
-		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
+		restaurants.POST("", middleware.RequireAuth(appCtx), ginrestaurant.CreateRestaurant(appCtx))
 		restaurants.GET("", ginrestaurant.ListRestaurantByCondition(appCtx))
 		restaurants.GET("/:id", ginrestaurant.GetRestaurantById(appCtx))
-		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appCtx))
-		restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
+		restaurants.PATCH("/:id", middleware.RequireAuth(appCtx), ginrestaurant.UpdateRestaurant(appCtx))
+		restaurants.DELETE("/:id", middleware.RequireAuth(appCtx), ginrestaurant.DeleteRestaurant(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
