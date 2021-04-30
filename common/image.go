@@ -81,6 +81,9 @@ type ImagesStore interface {
 func (i *Image) Validate(ctx context.Context, imageStore ImageStore) error {
 	if i != nil {
 		image, _ := imageStore.FindImageByCondition(ctx, map[string]interface{}{"id": i.Id})
+		if image == nil {
+			return ErrImgNotExisted
+		}
 		return i.ValidateData(image)
 	}
 
@@ -89,7 +92,7 @@ func (i *Image) Validate(ctx context.Context, imageStore ImageStore) error {
 
 func (i *Image) ValidateData(j *Image) error {
 	if j.Url != i.Url {
-		return ErrInvalidRequest(errors.New("image is not existed"))
+		return ErrImgNotExisted
 	}
 
 	return nil
@@ -118,3 +121,11 @@ func (i *Images) Validate(ctx context.Context, imagesStore ImagesStore) error {
 
 	return nil
 }
+
+var (
+	ErrImgNotExisted = NewCustomError(
+		errors.New("image is not existed"),
+		"image is not existed",
+		"ErrImgNotExisted",
+	)
+)
