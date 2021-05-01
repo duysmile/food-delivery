@@ -21,11 +21,12 @@ type UpdateRestaurantStore interface {
 }
 
 type updateRestaurantBiz struct {
-	store UpdateRestaurantStore
+	store      UpdateRestaurantStore
+	imageStore FindImageStore
 }
 
-func NewUpdateRestaurantBiz(store UpdateRestaurantStore) *updateRestaurantBiz {
-	return &updateRestaurantBiz{store: store}
+func NewUpdateRestaurantBiz(store UpdateRestaurantStore, imageStore FindImageStore) *updateRestaurantBiz {
+	return &updateRestaurantBiz{store: store, imageStore: imageStore}
 }
 
 func (biz *updateRestaurantBiz) UpdateRestaurant(
@@ -47,6 +48,14 @@ func (biz *updateRestaurantBiz) UpdateRestaurant(
 
 	if userId != oldData.OwnerId {
 		panic(common.ErrNoPermission(errors.New("userId is not match ownerId")))
+	}
+
+	if err := data.Logo.Validate(ctx, biz.imageStore); err != nil {
+		panic(err)
+	}
+
+	if err := data.Cover.Validate(ctx, biz.imageStore); err != nil {
+		panic(err)
 	}
 
 	if err := store.UpdateRestaurant(ctx, id, data); err != nil {
