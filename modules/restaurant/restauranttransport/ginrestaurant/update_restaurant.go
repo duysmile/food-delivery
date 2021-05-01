@@ -6,6 +6,7 @@ import (
 	"200lab/food-delivery/modules/restaurant/restaurantbiz"
 	"200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"200lab/food-delivery/modules/restaurant/restaurantstorage"
+	"200lab/food-delivery/modules/upload/uploadstorage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,8 @@ func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		user := c.MustGet(common.CurrentUser).(common.Requester)
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantbiz.NewUpdateRestaurantBiz(store)
+		imageStore := uploadstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := restaurantbiz.NewUpdateRestaurantBiz(store, imageStore)
 		if err := biz.UpdateRestaurant(
 			c.Request.Context(),
 			int(uid.GetLocalID()),
