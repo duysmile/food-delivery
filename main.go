@@ -5,6 +5,7 @@ import (
 	"200lab/food-delivery/component/uploadprovider"
 	"200lab/food-delivery/middleware"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
+	"200lab/food-delivery/modules/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
 	"200lab/food-delivery/modules/user/usertransport/ginuser"
 	"log"
@@ -70,6 +71,8 @@ func runService(
 		restaurants.GET("", ginrestaurant.ListRestaurantByCondition(appCtx))
 		restaurants.GET("/:id", ginrestaurant.GetRestaurantById(appCtx))
 		restaurants.PATCH("/:id", middleware.RequireAuth(appCtx), ginrestaurant.UpdateRestaurant(appCtx))
+		restaurants.POST("/:id/like", middleware.RequireAuth(appCtx), ginrestaurantlike.LikeRestaurant(appCtx))
+		restaurants.DELETE("/:id/unlike", middleware.RequireAuth(appCtx), ginrestaurantlike.UnlikeRestaurant(appCtx))
 		restaurants.DELETE("/:id", middleware.RequireAuth(appCtx), ginrestaurant.DeleteRestaurant(appCtx))
 	}
 
