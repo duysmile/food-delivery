@@ -4,6 +4,8 @@ import (
 	"200lab/food-delivery/common"
 	restaurantmodel "200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
+
+	"gorm.io/gorm"
 )
 
 func (s *sqlStore) FindDataByCondition(
@@ -19,6 +21,9 @@ func (s *sqlStore) FindDataByCondition(
 
 	var data restaurantmodel.Restaurant
 	if err := db.Where(conditions).First(&data).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, common.RecordNotFound
+		}
 		return nil, common.ErrDB(err)
 	}
 
