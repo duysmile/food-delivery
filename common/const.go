@@ -3,6 +3,7 @@ package common
 const (
 	DbTypeRestaurant = 1
 	DbTypeUser       = 2
+	DbTypeFood       = 3
 )
 
 const CurrentUser = "user"

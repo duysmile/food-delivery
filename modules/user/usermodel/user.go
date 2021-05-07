@@ -8,7 +8,7 @@ import (
 const EntityName = "User"
 
 type User struct {
-	common.SQLModel `json:",inline`
+	common.SQLModel `json:",inline"`
 	Email           string        `json:"email" gorm:"column:email;"`
 	Password        string        `json:"-" gorm:"column:password;"`
 	Salt            string        `json:"-" gorm:"column:salt;"`
@@ -36,7 +36,7 @@ func (u *User) Mask(isAdmin bool) {
 }
 
 type UserCreate struct {
-	common.SQLModel `json:",inline`
+	common.SQLModel `json:",inline"`
 	Email           string        `json:"email" gorm:"column:email;"`
 	Password        string        `json:"password" gorm:"column:password;"`
 	Salt            string        `json:"-" gorm:"column:salt;"`

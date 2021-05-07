@@ -149,3 +149,9 @@ func ErrNoPermission(err error) *AppError {
 		fmt.Sprintf("ErrNoPermission"),
 	)
 }
+
+var ErrWrongUID = NewCustomError(
+	errors.New("wrong uid"),
+	"wrong uid",
+	"ErrWrongUID",
+)
