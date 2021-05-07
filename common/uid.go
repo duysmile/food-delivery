@@ -61,7 +61,7 @@ func DecomposeUID(s string) (UID, error) {
 	}
 
 	if (1 << 18) > uid {
-		return UID{}, errors.New("wrong uid")
+		return UID{}, ErrWrongUID
 	}
 
 	// x = 1110 1110 0101 => x >> 4 = 1110 1110 & 0000 1111 = 1110

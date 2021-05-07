@@ -26,7 +26,7 @@ func (biz *getRestaurantBiz) GetRestaurant(ctx context.Context, id int) (*restau
 	store := biz.store
 	var data *restaurantmodel.Restaurant
 
-	data, err := store.FindDataByCondition(ctx, map[string]interface{}{"id": id})
+	data, err := store.FindDataByCondition(ctx, map[string]interface{}{"id": id}, "Owner")
 	if err != nil {
 		return nil, common.ErrCannotGetEntity(restaurantmodel.EntityName, err)
 	}

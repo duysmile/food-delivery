@@ -10,16 +10,17 @@ const EntityName = "Restaurant"
 
 type Restaurant struct {
 	common.SQLModel  `json:",inline"`
-	OwnerId          int            `json:"owner_id" gorm:"column:owner_id;"`
-	Name             string         `json:"name" gorm:"column:name;"`
-	Addr             string         `json:"address" gorm:"column:addr;"`
-	CityId           int            `json:"city_id" gorm:"column:city_id;"`
-	Lat              float32        `json:"lat" gorm:"column:lat;"`
-	Long             float32        `json:"lng" gorm:"column:lng;"`
-	ShippingFeePerKm float64        `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
-	Cover            *common.Images `json:"cover" gorm:"column:cover;"`
-	Logo             *common.Image  `json:"logo" gorm:"column:logo;"`
-	LikeCount        int            `json:"like_count" gorm:"-"`
+	OwnerId          int                `json:"owner_id" gorm:"column:owner_id;"`
+	Owner            *common.SimpleUser `json:"owner" gorm:"preload:false;foreignKey:OwnerId;"`
+	Name             string             `json:"name" gorm:"column:name;"`
+	Addr             string             `json:"address" gorm:"column:addr;"`
+	CityId           int                `json:"city_id" gorm:"column:city_id;"`
+	Lat              float32            `json:"lat" gorm:"column:lat;"`
+	Long             float32            `json:"lng" gorm:"column:lng;"`
+	ShippingFeePerKm float64            `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
+	Cover            *common.Images     `json:"cover" gorm:"column:cover;"`
+	Logo             *common.Image      `json:"logo" gorm:"column:logo;"`
+	LikeCount        int                `json:"like_count" gorm:"-"`
 }
 
 func (Restaurant) TableName() string {
@@ -27,7 +28,7 @@ func (Restaurant) TableName() string {
 }
 
 type RestaurantCreate struct {
-	common.SQLModel  `json:",inline`
+	common.SQLModel  `json:",inline"`
 	OwnerId          int            `json:"owner_id" gorm:"column:owner_id;"`
 	Name             string         `json:"name" gorm:"column:name;"`
 	Addr             string         `json:"address" gorm:"column:addr;"`
@@ -73,4 +74,8 @@ var (
 
 func (data *Restaurant) Mask(isAdminOrOwner bool) {
 	data.GenUID(common.DbTypeRestaurant)
+
+	if data.Owner != nil {
+		data.Owner.Mask(isAdminOrOwner)
+	}
 }

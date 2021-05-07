@@ -4,6 +4,7 @@ import (
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/component/uploadprovider"
 	"200lab/food-delivery/middleware"
+	"200lab/food-delivery/modules/food/foodtransport/ginfood"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"200lab/food-delivery/modules/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
@@ -74,6 +75,13 @@ func runService(
 		restaurants.POST("/:id/like", middleware.RequireAuth(appCtx), ginrestaurantlike.LikeRestaurant(appCtx))
 		restaurants.DELETE("/:id/unlike", middleware.RequireAuth(appCtx), ginrestaurantlike.UnlikeRestaurant(appCtx))
 		restaurants.DELETE("/:id", middleware.RequireAuth(appCtx), ginrestaurant.DeleteRestaurant(appCtx))
+
+		restaurants.GET("/:id/liked-users", ginrestaurantlike.ListUsersLikeRestaurant(appCtx))
+	}
+
+	foods := v1.Group("/foods")
+	{
+		foods.POST("", ginfood.CreateFood(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

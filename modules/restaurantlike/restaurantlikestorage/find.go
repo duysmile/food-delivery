@@ -11,6 +11,10 @@ import (
 func (s *sqlStore) GetRestaurantLike(ctx context.Context, conditions map[string]interface{}, moreInfo ...string) (*restaurantlikemodel.Like, error) {
 	db := s.db.Table(restaurantlikemodel.Like{}.TableName())
 
+	for i := range moreInfo {
+		db.Preload(moreInfo[i])
+	}
+
 	var like restaurantlikemodel.Like
 	if err := db.Where(conditions).First(&like).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

@@ -37,7 +37,7 @@ func (biz *listUserBiz) ListUserBiz(ctx context.Context,
 ) ([]restaurantmodel.Restaurant, error) {
 	var result []restaurantmodel.Restaurant
 
-	result, err := biz.store.ListByCondition(ctx, nil, filter, paging)
+	result, err := biz.store.ListByCondition(ctx, nil, filter, paging, "Owner")
 	if err != nil {
 		return nil, common.ErrCannotListEntity(restaurantmodel.EntityName, err)
 	}
