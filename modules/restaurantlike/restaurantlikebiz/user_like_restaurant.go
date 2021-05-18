@@ -2,8 +2,8 @@ package restaurantlikebiz
 
 import (
 	"200lab/food-delivery/common"
-	"200lab/food-delivery/component/asyncjob"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikemodel"
+	"200lab/food-delivery/pubsub"
 	"context"
 )
 
@@ -17,17 +17,20 @@ type IncreaseLikedCountStore interface {
 }
 
 type createRestaurantLikeBiz struct {
-	createStore             CreateRestaurantLikeStore
-	increaseLikedCountStore IncreaseLikedCountStore
+	createStore CreateRestaurantLikeStore
+	// increaseLikedCountStore IncreaseLikedCountStore
+	pubsub pubsub.Pubsub
 }
 
 func NewCreateRestaurantLikeBiz(
 	createStore CreateRestaurantLikeStore,
-	increaseLikedCountStore IncreaseLikedCountStore,
+	// increaseLikedCountStore IncreaseLikedCountStore,
+	pb pubsub.Pubsub,
 ) *createRestaurantLikeBiz {
 	return &createRestaurantLikeBiz{
-		createStore:             createStore,
-		increaseLikedCountStore: increaseLikedCountStore,
+		createStore: createStore,
+		// increaseLikedCountStore: increaseLikedCountStore,
+		pubsub: pb,
 	}
 }
 
@@ -50,12 +53,17 @@ func (biz *createRestaurantLikeBiz) CreateLike(ctx context.Context, data *restau
 	}
 
 	// side effect
-	job := asyncjob.NewJob(func(ctx context.Context) error {
-		return biz.increaseLikedCountStore.IncreaseLikedCount(ctx, data.RestaurantId)
-	})
 
-	group := asyncjob.NewGroup(true, job)
-	group.Run(ctx)
+	// use async job
+	// job := asyncjob.NewJob(func(ctx context.Context) error {
+	// 	return biz.increaseLikedCountStore.IncreaseLikedCount(ctx, data.RestaurantId)
+	// })
+
+	// group := asyncjob.NewGroup(true, job)
+	// group.Run(ctx)
+
+	// use pub/sub
+	biz.pubsub.Publish(ctx, common.TopicUserLikeRestaurant, pubsub.NewMessage(data))
 
 	return nil
 }

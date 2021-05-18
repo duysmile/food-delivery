@@ -1,8 +1,9 @@
 package restaurantlikebiz
 
 import (
-	"200lab/food-delivery/component/asyncjob"
+	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikemodel"
+	"200lab/food-delivery/pubsub"
 	"context"
 )
 
@@ -16,17 +17,20 @@ type DecreaseLikedCountStore interface {
 }
 
 type deleteRestaurantLikeBiz struct {
-	deleteStore             DeleteRestaurantLikeStore
-	decreaseLikedCountStore DecreaseLikedCountStore
+	deleteStore DeleteRestaurantLikeStore
+	// decreaseLikedCountStore DecreaseLikedCountStore
+	pubsub pubsub.Pubsub
 }
 
 func NewDeleteRestaurantLikeBiz(
 	deleteStore DeleteRestaurantLikeStore,
-	decreaseLikedCountStore DecreaseLikedCountStore,
+	// decreaseLikedCountStore DecreaseLikedCountStore,
+	pb pubsub.Pubsub,
 ) *deleteRestaurantLikeBiz {
 	return &deleteRestaurantLikeBiz{
-		deleteStore:             deleteStore,
-		decreaseLikedCountStore: decreaseLikedCountStore,
+		deleteStore: deleteStore,
+		// decreaseLikedCountStore: decreaseLikedCountStore,
+		pubsub: pb,
 	}
 }
 
@@ -45,11 +49,15 @@ func (biz *deleteRestaurantLikeBiz) DeleteLike(ctx context.Context, data *restau
 	}
 
 	// side effect
-	job := asyncjob.NewJob(func(ctx context.Context) error {
-		return biz.decreaseLikedCountStore.DecreaseLikedCount(ctx, data.RestaurantId)
-	})
+	// use async job
+	// job := asyncjob.NewJob(func(ctx context.Context) error {
+	// 	return biz.decreaseLikedCountStore.DecreaseLikedCount(ctx, data.RestaurantId)
+	// })
 
-	asyncjob.NewGroup(true, job).Run(ctx)
+	// asyncjob.NewGroup(true, job).Run(ctx)
+
+	// use pubsub
+	biz.pubsub.Publish(ctx, common.TopicUserUnLikeRestaurant, pubsub.NewMessage(data))
 
 	return nil
 }

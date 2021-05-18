@@ -9,6 +9,8 @@ import (
 	"200lab/food-delivery/modules/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
 	"200lab/food-delivery/modules/user/usertransport/ginuser"
+	"200lab/food-delivery/pubsub/pblocal"
+	"200lab/food-delivery/subscriber"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -47,14 +49,18 @@ func runService(
 	provider uploadprovider.UploadProvider,
 	secretKey string,
 ) error {
+	appCtx := component.NewAppContext(db, provider, secretKey, pblocal.NewPubSub())
+
+	if err := subscriber.NewEngine(appCtx).Start(); err != nil {
+		log.Fatalln(err)
+	}
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
-
-	appCtx := component.NewAppContext(db, provider, secretKey)
 
 	r.Use(middleware.Recover(appCtx))
 
