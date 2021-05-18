@@ -35,3 +35,11 @@ func (LikeCreate) TableName() string {
 func (LikeDelete) TableName() string {
 	return "restaurant_likes"
 }
+
+func (like LikeCreate) GetRestaurantId() int {
+	return like.RestaurantId
+}
+
+func (like LikeDelete) GetRestaurantId() int {
+	return like.RestaurantId
+}

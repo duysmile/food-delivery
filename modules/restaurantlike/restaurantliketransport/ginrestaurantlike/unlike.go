@@ -25,7 +25,8 @@ func UnlikeRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantlikebiz.NewDeleteRestaurantLikeBiz(store)
+		// decreaseLikedCountStore := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := restaurantlikebiz.NewDeleteRestaurantLikeBiz(store, appCtx.GetPubSub())
 
 		if err := biz.DeleteLike(c.Request.Context(), &likeDelete); err != nil {
 			panic(err)

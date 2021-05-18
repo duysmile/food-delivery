@@ -20,7 +20,7 @@ type Restaurant struct {
 	ShippingFeePerKm float64            `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
 	Cover            *common.Images     `json:"cover" gorm:"column:cover;"`
 	Logo             *common.Image      `json:"logo" gorm:"column:logo;"`
-	LikeCount        int                `json:"like_count" gorm:"-"`
+	LikeCount        int                `json:"liked_count" gorm:"column:liked_count;"` // computed field
 }
 
 func (Restaurant) TableName() string {

@@ -25,7 +25,8 @@ func LikeRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		createStore := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantlikebiz.NewCreateRestaurantLikeBiz(createStore)
+		// increaseLikedCountStore := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := restaurantlikebiz.NewCreateRestaurantLikeBiz(createStore, appCtx.GetPubSub())
 
 		if err := biz.CreateLike(c.Request.Context(), &restaurantLike); err != nil {
 			panic(err)

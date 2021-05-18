@@ -1,9 +1,11 @@
 package foodbiz
 
 import (
+	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/food/foodmodel"
 	"200lab/food-delivery/modules/restaurant/restaurantmodel"
 	"context"
+	"errors"
 )
 
 type CreateDataStore interface {
@@ -33,7 +35,7 @@ func (biz *createFoodBiz) CreateFood(ctx context.Context, userId int, data *food
 		"owner_id": userId,
 	})
 	if err != nil {
-		return err
+		return common.ErrNoPermission(errors.New("restaurant not belong to user"))
 	}
 
 	if err := biz.store.CreateFood(ctx, data); err != nil {
