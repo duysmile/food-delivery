@@ -2,6 +2,7 @@ package restaurantlikebiz
 
 import (
 	"200lab/food-delivery/common"
+	"200lab/food-delivery/component/asyncjob"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikemodel"
 	"context"
 )
@@ -11,15 +12,22 @@ type CreateRestaurantLikeStore interface {
 	GetRestaurantLike(ctx context.Context, conditions map[string]interface{}, moreInfo ...string) (*restaurantlikemodel.Like, error)
 }
 
+type IncreaseLikedCountStore interface {
+	IncreaseLikedCount(ctx context.Context, id int) error
+}
+
 type createRestaurantLikeBiz struct {
-	createStore CreateRestaurantLikeStore
+	createStore             CreateRestaurantLikeStore
+	increaseLikedCountStore IncreaseLikedCountStore
 }
 
 func NewCreateRestaurantLikeBiz(
 	createStore CreateRestaurantLikeStore,
+	increaseLikedCountStore IncreaseLikedCountStore,
 ) *createRestaurantLikeBiz {
 	return &createRestaurantLikeBiz{
-		createStore: createStore,
+		createStore:             createStore,
+		increaseLikedCountStore: increaseLikedCountStore,
 	}
 }
 
@@ -40,6 +48,14 @@ func (biz *createRestaurantLikeBiz) CreateLike(ctx context.Context, data *restau
 	if err := biz.createStore.CreateRestaurantLike(ctx, data); err != nil {
 		return err
 	}
+
+	// side effect
+	job := asyncjob.NewJob(func(ctx context.Context) error {
+		return biz.increaseLikedCountStore.IncreaseLikedCount(ctx, data.RestaurantId)
+	})
+
+	group := asyncjob.NewGroup(true, job)
+	group.Run(ctx)
 
 	return nil
 }

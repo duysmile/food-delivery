@@ -3,6 +3,7 @@ package ginrestaurantlike
 import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
+	"200lab/food-delivery/modules/restaurant/restaurantstorage"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikebiz"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikemodel"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikestorage"
@@ -25,7 +26,8 @@ func UnlikeRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantlikebiz.NewDeleteRestaurantLikeBiz(store)
+		decreaseLikedCountStore := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := restaurantlikebiz.NewDeleteRestaurantLikeBiz(store, decreaseLikedCountStore)
 
 		if err := biz.DeleteLike(c.Request.Context(), &likeDelete); err != nil {
 			panic(err)

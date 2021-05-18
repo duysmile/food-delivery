@@ -1,6 +1,7 @@
 package restaurantlikebiz
 
 import (
+	"200lab/food-delivery/component/asyncjob"
 	"200lab/food-delivery/modules/restaurantlike/restaurantlikemodel"
 	"context"
 )
@@ -10,15 +11,22 @@ type DeleteRestaurantLikeStore interface {
 	GetRestaurantLike(ctx context.Context, conditions map[string]interface{}, moreInfo ...string) (*restaurantlikemodel.Like, error)
 }
 
+type DecreaseLikedCountStore interface {
+	DecreaseLikedCount(ctx context.Context, id int) error
+}
+
 type deleteRestaurantLikeBiz struct {
-	deleteStore DeleteRestaurantLikeStore
+	deleteStore             DeleteRestaurantLikeStore
+	decreaseLikedCountStore DecreaseLikedCountStore
 }
 
 func NewDeleteRestaurantLikeBiz(
 	deleteStore DeleteRestaurantLikeStore,
+	decreaseLikedCountStore DecreaseLikedCountStore,
 ) *deleteRestaurantLikeBiz {
 	return &deleteRestaurantLikeBiz{
-		deleteStore: deleteStore,
+		deleteStore:             deleteStore,
+		decreaseLikedCountStore: decreaseLikedCountStore,
 	}
 }
 
@@ -35,6 +43,13 @@ func (biz *deleteRestaurantLikeBiz) DeleteLike(ctx context.Context, data *restau
 	if err := biz.deleteStore.DeleteRestaurantLike(ctx, data); err != nil {
 		return err
 	}
+
+	// side effect
+	job := asyncjob.NewJob(func(ctx context.Context) error {
+		return biz.decreaseLikedCountStore.DecreaseLikedCount(ctx, data.RestaurantId)
+	})
+
+	asyncjob.NewGroup(true, job).Run(ctx)
 
 	return nil
 }
