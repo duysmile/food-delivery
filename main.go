@@ -74,6 +74,8 @@ func runService(
 
 	restaurants := v1.Group("/restaurants")
 	{
+		restaurants.GET("/:id/foods", ginfood.ListFoodByRestaurantId(appCtx))
+
 		restaurants.POST("", middleware.RequireAuth(appCtx), ginrestaurant.CreateRestaurant(appCtx))
 		restaurants.GET("", ginrestaurant.ListRestaurantByCondition(appCtx))
 		restaurants.GET("/:id", ginrestaurant.GetRestaurantById(appCtx))
