@@ -2,20 +2,23 @@ package foodmodel
 
 import (
 	"200lab/food-delivery/common"
+	"200lab/food-delivery/modules/restaurant/restaurantmodel"
 )
 
 const EntityName = "Food"
 
 type Food struct {
 	common.SQLModel  `json:",inline"`
-	RestaurantId     int            `json:"-" gorm:"column:restaurant_id;"`
-	FakeRestaurantId *common.UID    `json:"restaurant_id" gorm:"-"`
-	CategoryId       int            `json:"-" gorm:"column:category_id;"`
-	FakeCategoryId   *common.UID    `json:"category_id,omitempty" gorm:"-"`
-	Name             string         `json:"name" gorm:"column:name;"`
-	Description      string         `json:"description,omitempty" gorm:"column:description;"`
-	Price            float32        `json:"price" gorm:"column:price;"`
-	Images           *common.Images `json:"images" column:"images"`
+	RestaurantId     int                         `json:"-" gorm:"column:restaurant_id;"`
+	Restaurant       *restaurantmodel.Restaurant `json:"-" gorm:"preload:false;"`
+	FakeRestaurantId *common.UID                 `json:"restaurant_id" gorm:"-"`
+	CategoryId       int                         `json:"-" gorm:"column:category_id;"`
+	FakeCategoryId   *common.UID                 `json:"category_id,omitempty" gorm:"-"`
+	Name             string                      `json:"name" gorm:"column:name;"`
+	Description      string                      `json:"description,omitempty" gorm:"column:description;"`
+	Price            float32                     `json:"price" gorm:"column:price;"`
+	Images           *common.Images              `json:"images" gorm:"column:images;"`
+	LikeCount        int                         `json:"liked_count" gorm:"column:liked_count;"`
 }
 
 type FoodCreate struct {

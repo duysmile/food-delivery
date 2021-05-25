@@ -101,6 +101,7 @@ func runService(
 	foods := v1.Group("/foods")
 	{
 		foods.POST("", ginfood.CreateFood(appCtx))
+		foods.DELETE("/:id", middleware.RequireAuth(appCtx), ginfood.DeleteFood(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
