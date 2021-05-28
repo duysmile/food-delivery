@@ -49,7 +49,7 @@ func (biz *createRestaurantLikeBiz) CreateLike(ctx context.Context, data *restau
 	}
 
 	if err := biz.createStore.CreateRestaurantLike(ctx, data); err != nil {
-		return err
+		return common.ErrCannotCreateEntity(restaurantlikemodel.EntityName, err)
 	}
 
 	// side effect
