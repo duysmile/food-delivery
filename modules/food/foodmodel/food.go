@@ -32,6 +32,17 @@ type FoodCreate struct {
 	Images           *common.Images `json:"images" column:"images"`
 }
 
+type FoodUpdate struct {
+	RestaurantId   int                         `json:"-" gorm:"column:restaurant_id;"`
+	Restaurant     *restaurantmodel.Restaurant `json:"-" gorm:"preload:false;"`
+	CategoryId     *int                        `json:"-" gorm:"column:category_id;"`
+	FakeCategoryId string                      `json:"category_id,omitempty" gorm:"-"`
+	Name           string                      `json:"name" gorm:"column:name;"`
+	Description    string                      `json:"description" gorm:"column:description;"`
+	Price          float32                     `json:"price" gorm:"column:price;"`
+	Images         *common.Images              `json:"images" gorm:"column:images;"`
+}
+
 func (Food) TableName() string {
 	return "foods"
 }
