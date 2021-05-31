@@ -10,6 +10,7 @@ import (
 	"200lab/food-delivery/modules/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
 	"200lab/food-delivery/modules/user/usertransport/ginuser"
+	"200lab/food-delivery/modules/useraddress/useraddresstransport/ginuseraddress"
 	"200lab/food-delivery/pubsub/pblocal"
 	"200lab/food-delivery/socketio"
 	"200lab/food-delivery/subscriber"
@@ -83,6 +84,11 @@ func runService(
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/login", ginuser.Login(appCtx))
 	v1.GET("/profile", middleware.RequireAuth(appCtx), ginuser.GetProfileUser(appCtx))
+
+	userAddresses := v1.Group("/user-addresses")
+	{
+		userAddresses.POST("", middleware.RequireAuth(appCtx), ginuseraddress.CreateUserAddress(appCtx))
+	}
 
 	restaurants := v1.Group("/restaurants")
 	{
