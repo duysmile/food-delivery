@@ -89,6 +89,7 @@ func runService(
 	{
 		userAddresses.POST("", middleware.RequireAuth(appCtx), ginuseraddress.CreateUserAddress(appCtx))
 		userAddresses.GET("", middleware.RequireAuth(appCtx), ginuseraddress.ListUserAddresses(appCtx))
+		userAddresses.GET("/:id", middleware.RequireAuth(appCtx), ginuseraddress.GetUserAddress(appCtx))
 	}
 
 	restaurants := v1.Group("/restaurants")
