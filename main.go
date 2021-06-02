@@ -4,6 +4,7 @@ import (
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/component/uploadprovider"
 	"200lab/food-delivery/middleware"
+	"200lab/food-delivery/modules/cart/carttransport/gincart"
 	"200lab/food-delivery/modules/food/foodtransport/ginfood"
 	"200lab/food-delivery/modules/foodlike/foodtransport/ginfoodlike"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
@@ -115,6 +116,11 @@ func runService(
 		foods.PATCH("/:id", middleware.RequireAuth(appCtx), ginfood.UpdateFood(appCtx))
 		foods.POST("/:id/like", middleware.RequireAuth(appCtx), ginfoodlike.LikeFood(appCtx))
 		foods.POST("/:id/unlike", middleware.RequireAuth(appCtx), ginfoodlike.UnlikeFood(appCtx))
+	}
+
+	carts := v1.Group("/carts")
+	{
+		carts.POST("", middleware.RequireAuth(appCtx), gincart.CreateCart(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
