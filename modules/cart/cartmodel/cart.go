@@ -9,13 +9,13 @@ import (
 const EntityName = "Cart"
 
 type Cart struct {
-	UserId    int            `json:"-" gorm:"column:user_id;"`
-	FoodId    int            `json:"-" gorm:"column:food_id;"`
-	Food      foodmodel.Food `json:"food" gorm:"preload:false;"`
-	Quantity  int            `json:"quantity" gorm:"column:quantity;"`
-	Status    int            `json:"status" gorm:"column:status;"`
-	CreatedAt *time.Time     `json:"created_at" gorm:"column:created_at;"`
-	UpdatedAt *time.Time     `json:"updated_at" gorm:"column:updated_at;"`
+	UserId    int                   `json:"-" gorm:"column:user_id;"`
+	FoodId    int                   `json:"-" gorm:"column:food_id;"`
+	Food      *foodmodel.SimpleFood `json:"food" gorm:"preload:false;"`
+	Quantity  int                   `json:"quantity" gorm:"column:quantity;"`
+	Status    int                   `json:"status" gorm:"column:status;"`
+	CreatedAt *time.Time            `json:"created_at" gorm:"column:created_at;"`
+	UpdatedAt *time.Time            `json:"updated_at" gorm:"column:updated_at;"`
 }
 
 type CartCreate struct {

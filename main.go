@@ -121,6 +121,7 @@ func runService(
 	carts := v1.Group("/carts")
 	{
 		carts.POST("", middleware.RequireAuth(appCtx), gincart.CreateCart(appCtx))
+		carts.GET("", middleware.RequireAuth(appCtx), gincart.GetCart(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

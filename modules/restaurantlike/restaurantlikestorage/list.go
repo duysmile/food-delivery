@@ -86,7 +86,7 @@ func (s *sqlStore) GetUsersLikeRestaurant(
 		users[i] = *result[i].User
 
 		if i == len(result)-1 {
-			cursorStr := base58.Encode([]byte(fmt.Sprintf("%v", item.CreatedAt.Format((timeLayout)))))
+			cursorStr := base58.Encode([]byte(fmt.Sprintf("%v", item.CreatedAt.Format(timeLayout))))
 			paging.NextCursor = cursorStr
 		}
 	}
