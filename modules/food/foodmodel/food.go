@@ -21,6 +21,15 @@ type Food struct {
 	LikeCount        int                         `json:"liked_count" gorm:"column:liked_count;"`
 }
 
+type SimpleFood struct {
+	common.SQLModel `json:",inline"`
+	Name            string         `json:"name" gorm:"column:name;"`
+	Description     string         `json:"description,omitempty" gorm:"column:description;"`
+	Price           float32        `json:"price" gorm:"column:price;"`
+	Images          *common.Images `json:"images" gorm:"column:images;"`
+	LikeCount       int            `json:"liked_count" gorm:"column:liked_count;"`
+}
+
 type FoodCreate struct {
 	RestaurantId     int            `json:"-" gorm:"column:restaurant_id;"`
 	FakeRestaurantId string         `json:"restaurant_id" gorm:"-"`
@@ -44,6 +53,10 @@ type FoodUpdate struct {
 }
 
 func (Food) TableName() string {
+	return "foods"
+}
+
+func (SimpleFood) TableName() string {
 	return "foods"
 }
 
@@ -80,4 +93,8 @@ func (f *FoodCreate) Unmask() error {
 	}
 
 	return nil
+}
+
+func (u *SimpleFood) Mask(isAdminOrOwner bool) {
+	u.GenUID(common.DbTypeFood)
 }
