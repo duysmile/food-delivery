@@ -7,4 +7,5 @@ const (
 	TopicUserUnLikeRestaurant pubsub.Topic = "TopicUserUnLikeRestaurant"
 	TopicUserLikeFood         pubsub.Topic = "TopicUserLikeFood"
 	TopicUserUnLikeFood       pubsub.Topic = "TopicUserUnLikeFood"
+	TopicCreateOrder          pubsub.Topic = "TopicCreateOrder"
 )

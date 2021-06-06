@@ -15,3 +15,15 @@ func (s *sqlStore) DeleteCart(ctx context.Context, cart *cartmodel.CartDelete) e
 
 	return nil
 }
+
+func (s *sqlStore) DeleteCarts(ctx context.Context, userId int, foodIds []int) error {
+	db := s.db.Table(cartmodel.CartDelete{}.TableName()).Where("status in (?)", 1)
+
+	if err := db.Where("user_id = ?", userId).
+		Where("food_id in (?)", foodIds).
+		Delete(&cartmodel.CartDelete{}).Error; err != nil {
+		return common.ErrDB(err)
+	}
+
+	return nil
+}

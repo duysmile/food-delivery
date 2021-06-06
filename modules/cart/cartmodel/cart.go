@@ -55,3 +55,11 @@ func (CartUpdate) TableName() string {
 func (CartDelete) TableName() string {
 	return "carts"
 }
+
+func (c CartDelete) GetUserId() int {
+	return c.UserId
+}
+
+func (c CartDelete) GetFoodId() int {
+	return c.FoodId
+}

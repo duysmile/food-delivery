@@ -48,6 +48,13 @@ func (engine *consumerEngine) Start() error {
 		RunDecreaseLikeCountAfterUserUnLikeFood(engine.appCtx),
 	)
 
+	engine.startSubTopic(
+		common.TopicCreateOrder,
+		true,
+		RunDeleteCartAfterCreateOrder(engine.appCtx),
+		RunCreateOrderTrackingAfterCreateOrder(engine.appCtx),
+	)
+
 	return nil
 }
 
@@ -70,6 +77,8 @@ func (engine *consumerEngine) startSubTopic(topic pubsub.Topic, isConcurrent boo
 	}
 
 	go func() {
+		defer common.AppRecover()
+
 		for {
 			msg := <-c
 
