@@ -7,6 +7,7 @@ import (
 	"200lab/food-delivery/modules/cart/carttransport/gincart"
 	"200lab/food-delivery/modules/food/foodtransport/ginfood"
 	"200lab/food-delivery/modules/foodlike/foodtransport/ginfoodlike"
+	"200lab/food-delivery/modules/order/ordertransport/ginorder"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"200lab/food-delivery/modules/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
@@ -124,6 +125,11 @@ func runService(
 		carts.GET("", middleware.RequireAuth(appCtx), gincart.GetCart(appCtx))
 		carts.DELETE("/:id", middleware.RequireAuth(appCtx), gincart.DeleteCart(appCtx))
 		carts.PATCH("/:id", middleware.RequireAuth(appCtx), gincart.UpdateCart(appCtx))
+	}
+
+	orders := v1.Group("/orders")
+	{
+		orders.POST("", middleware.RequireAuth(appCtx), ginorder.CreateOrder(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

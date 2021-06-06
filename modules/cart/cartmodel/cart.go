@@ -18,6 +18,12 @@ type Cart struct {
 	UpdatedAt *time.Time            `json:"updated_at" gorm:"column:updated_at;"`
 }
 
+type CartItem struct {
+	FoodId     int         `json:"-" gorm:"-"`
+	FakeFoodId *common.UID `json:"food_id" gorm:"-"`
+	Quantity   int         `json:"quantity" gorm:"-"`
+}
+
 type CartCreate struct {
 	UserId     int         `json:"-" gorm:"column:user_id;"`
 	FoodId     int         `json:"-" gorm:"column:food_id;"`
