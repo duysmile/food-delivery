@@ -122,6 +122,8 @@ func runService(
 	{
 		carts.POST("", middleware.RequireAuth(appCtx), gincart.CreateCart(appCtx))
 		carts.GET("", middleware.RequireAuth(appCtx), gincart.GetCart(appCtx))
+		carts.DELETE("/:id", middleware.RequireAuth(appCtx), gincart.DeleteCart(appCtx))
+		carts.PATCH("/:id", middleware.RequireAuth(appCtx), gincart.UpdateCart(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
