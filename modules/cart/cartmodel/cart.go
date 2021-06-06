@@ -25,10 +25,13 @@ type CartCreate struct {
 	Quantity   int         `json:"quantity" gorm:"column:quantity;"`
 }
 
+type CartDelete struct {
+	UserId int `json:"-" gorm:"column:user_id;"`
+	FoodId int `json:"-" gorm:"column:food_id;"`
+}
+
 type CartUpdate struct {
-	FoodId     int         `json:"-" gorm:"column:food_id;"`
-	FakeFoodId *common.UID `json:"food_id" gorm:"-"`
-	Quantity   int         `json:"quantity" gorm:"column:quantity;"`
+	Quantity int `json:"quantity" gorm:"column:quantity;"`
 }
 
 func (Cart) TableName() string {
@@ -40,5 +43,9 @@ func (CartCreate) TableName() string {
 }
 
 func (CartUpdate) TableName() string {
+	return "carts"
+}
+
+func (CartDelete) TableName() string {
 	return "carts"
 }
