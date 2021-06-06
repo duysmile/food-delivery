@@ -1,6 +1,7 @@
 package asyncjob
 
 import (
+	"200lab/food-delivery/common"
 	"context"
 	"log"
 	"sync"
@@ -46,6 +47,7 @@ func (g *group) Run(ctx context.Context) error {
 	for i, _ := range g.jobs {
 		if g.isConcurrent {
 			go func(aj Job) {
+				defer common.AppRecover()
 				errChan <- g.runJob(ctx, aj)
 				g.wg.Done()
 			}(g.jobs[i])

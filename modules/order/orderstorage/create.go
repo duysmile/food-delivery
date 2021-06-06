@@ -6,12 +6,12 @@ import (
 	"context"
 )
 
-func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) error {
+func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) (int, error) {
 	db := s.db.Begin()
 
 	if err := db.Create(order).Error; err != nil {
 		db.Rollback()
-		return common.ErrDB(err)
+		return 0, common.ErrDB(err)
 	}
 
 	for i := range orderDetails {
@@ -20,13 +20,13 @@ func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, ord
 
 	if err := db.Create(orderDetails).Error; err != nil {
 		db.Rollback()
-		return common.ErrDB(err)
+		return 0, common.ErrDB(err)
 	}
 
 	if err := db.Commit().Error; err != nil {
 		db.Rollback()
-		return common.ErrDB(err)
+		return 0, common.ErrDB(err)
 	}
 
-	return nil
+	return order.Id, nil
 }

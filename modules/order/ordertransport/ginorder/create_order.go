@@ -29,7 +29,7 @@ func CreateOrder(appCtx component.AppContext) gin.HandlerFunc {
 
 		store := orderstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		foodStore := foodstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := orderbiz.NewCreateOrderBiz(store, foodStore)
+		biz := orderbiz.NewCreateOrderBiz(store, foodStore, appCtx.GetPubSub())
 
 		if err := biz.CreateOrder(c.Request.Context(), user.GetUserId(), &data); err != nil {
 			panic(err)

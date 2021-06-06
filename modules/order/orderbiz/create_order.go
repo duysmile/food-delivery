@@ -4,11 +4,13 @@ import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/food/foodmodel"
 	"200lab/food-delivery/modules/order/ordermodel"
+	"200lab/food-delivery/modules/ordertracking/ordertrackingmodel"
+	"200lab/food-delivery/pubsub"
 	"context"
 )
 
 type CreateOrderStore interface {
-	CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) error
+	CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) (int, error)
 }
 
 type GetFoodsStore interface {
@@ -24,10 +26,19 @@ type GetFoodsStore interface {
 type createOrderBiz struct {
 	store     CreateOrderStore
 	foodStore GetFoodsStore
+	pubsub    pubsub.Pubsub
 }
 
-func NewCreateOrderBiz(store CreateOrderStore, foodStore GetFoodsStore) *createOrderBiz {
-	return &createOrderBiz{store: store, foodStore: foodStore}
+func NewCreateOrderBiz(
+	store CreateOrderStore,
+	foodStore GetFoodsStore,
+	pb pubsub.Pubsub,
+) *createOrderBiz {
+	return &createOrderBiz{
+		store:     store,
+		foodStore: foodStore,
+		pubsub:    pb,
+	}
 }
 
 func (biz *createOrderBiz) CreateOrder(ctx context.Context, userId int, data *ordermodel.OrderCreate) error {
@@ -72,14 +83,24 @@ func (biz *createOrderBiz) CreateOrder(ctx context.Context, userId int, data *or
 		}
 	}
 
-	if err = biz.store.CreateOrder(ctx, &order, orderDetails); err != nil {
+	orderId, err := biz.store.CreateOrder(ctx, &order, orderDetails)
+	if err != nil {
 		return common.ErrCannotCreateEntity(ordermodel.EntityName, err)
 	}
 
-	// TODO: delete cart
-	// TODO: create order tracking
+	// TODO: handle payment before side effect
 
-	// TODO: handle payment
+	// side effect
+	foodIds := make([]int, len(foods))
+	for i := range foods {
+		foodIds[i] = foods[i].Id
+	}
+	biz.pubsub.Publish(ctx, common.TopicCreateOrder, pubsub.NewMessage(ordermodel.DataPublish{
+		UserId:  userId,
+		FoodIds: foodIds,
+		OrderId: orderId,
+		State:   ordertrackingmodel.WaitingForShipper,
+	}))
 
 	return nil
 }
