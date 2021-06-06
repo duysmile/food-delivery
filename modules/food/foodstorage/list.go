@@ -21,24 +21,29 @@ func (s *sqlStore) ListFoodByCondition(
 
 	}
 
-	if err := db.Where(conditions).Count(&paging.Total).Error; err != nil {
-		return nil, common.ErrDB(err)
+	if paging != nil {
+		if err := db.Where(conditions).Count(&paging.Total).Error; err != nil {
+			return nil, common.ErrDB(err)
+		}
 	}
 
 	for index := range moreInfo {
 		db.Preload(moreInfo[index])
 	}
 
-	if c := paging.FakeCursor; c != "" {
-		if uid, err := common.FromBase58(c); err == nil {
-			db = db.Where("id < ?", uid.GetLocalID())
+	if paging != nil {
+		if c := paging.FakeCursor; c != "" {
+			if uid, err := common.FromBase58(c); err == nil {
+				db = db.Where("id < ?", uid.GetLocalID())
+			}
+		} else {
+			db = db.Offset((paging.Page - 1) * paging.Limit)
 		}
-	} else {
-		db = db.Offset((paging.Page - 1) * paging.Limit)
+		db = db.Limit(paging.Limit)
 	}
 
 	var data []foodmodel.Food
-	if err := db.Limit(paging.Limit).
+	if err := db.
 		Order("id desc").
 		Find(&data).Error; err != nil {
 		return nil, common.ErrDB(err)
