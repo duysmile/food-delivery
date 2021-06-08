@@ -99,7 +99,7 @@ func (biz *createOrderBiz) CreateOrder(ctx context.Context, userId int, data *or
 		UserId:  userId,
 		FoodIds: foodIds,
 		OrderId: orderId,
-		State:   ordertrackingmodel.WaitingForShipper,
+		State:   ordertrackingmodel.Preparing,
 	}))
 
 	return nil

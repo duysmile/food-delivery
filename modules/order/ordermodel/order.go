@@ -23,6 +23,11 @@ type OrderCreate struct {
 	Discount float32              `json:"discount" gorm:"-"`
 }
 
+type OrderUpdate struct {
+	ShipperId *int `json:"-" gorm:"column:shipper_id"`
+	Status    *int `json:"-" gorm:"column:status"`
+}
+
 type DataPublish struct {
 	UserId  int
 	FoodIds []int
@@ -47,6 +52,10 @@ func (d DataPublish) GetState() ordertrackingmodel.OrderState {
 }
 
 func (Order) TableName() string {
+	return "orders"
+}
+
+func (OrderUpdate) TableName() string {
 	return "orders"
 }
 
