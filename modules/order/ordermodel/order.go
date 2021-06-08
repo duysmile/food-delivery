@@ -11,11 +11,12 @@ const EntityName = "Order"
 
 type Order struct {
 	common.SQLModel `json:",inline"`
-	UserId          int                `json:"-" gorm:"column:user_id;"`
-	User            *common.SimpleUser `json:"user" gorm:"preload:false;"`
-	TotalPrice      float32            `json:"total_price" gorm:"column:total_price;"`
-	ShipperId       int                `json:"-" gorm:"column:shipper_id;"`
-	Shipper         *common.SimpleUser `json:"shipper" gorm:"preload:false;"`
+	UserId          int `json:"-" gorm:"column:user_id;"`
+	// User            *common.SimpleUser `json:"user" gorm:"preload:false;"`
+	TotalPrice   float32       `json:"total_price" gorm:"column:total_price;"`
+	ShipperId    int           `json:"-" gorm:"column:shipper_id;"`
+	OrderDetails []OrderDetail `json:"order_details,omitempty" gorm:"preload:false"`
+	// Shipper         *common.SimpleUser `json:"shipper,omitempty" gorm:"preload:false;"`
 }
 
 type OrderCreate struct {
