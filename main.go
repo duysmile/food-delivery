@@ -8,6 +8,7 @@ import (
 	"200lab/food-delivery/modules/food/foodtransport/ginfood"
 	"200lab/food-delivery/modules/foodlike/foodtransport/ginfoodlike"
 	"200lab/food-delivery/modules/order/ordertransport/ginorder"
+	"200lab/food-delivery/modules/ordertracking/ordertrackingtransport.go/ginordertracking"
 	"200lab/food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"200lab/food-delivery/modules/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"200lab/food-delivery/modules/upload/uploadtransport/ginupload"
@@ -129,7 +130,10 @@ func runService(
 
 	orders := v1.Group("/orders")
 	{
+		orders.GET("", middleware.RequireAuth(appCtx), ginorder.ListOrder(appCtx))
 		orders.POST("", middleware.RequireAuth(appCtx), ginorder.CreateOrder(appCtx))
+		orders.GET("/:id/order-trackings", middleware.RequireAuth(appCtx), ginordertracking.GetOrderTracking(appCtx))
+		orders.PATCH("/:id/order-trackings/cancel", middleware.RequireAuth(appCtx), ginordertracking.CancelOrder(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

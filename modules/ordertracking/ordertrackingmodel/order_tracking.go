@@ -7,7 +7,7 @@ const EntityName = "OrderTracking"
 type OrderTracking struct {
 	common.SQLModel `json:",inline"`
 	OrderId         int        `json:"-" gorm:"column:order_id;"`
-	State           OrderState `json:"-" gorm:"column:state;"`
+	State           OrderState `json:"state" gorm:"column:state;"`
 }
 
 type OrderTrackingCreate struct {

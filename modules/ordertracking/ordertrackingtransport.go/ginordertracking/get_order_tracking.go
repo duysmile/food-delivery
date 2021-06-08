@@ -3,7 +3,6 @@ package ginordertracking
 import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/component"
-	"200lab/food-delivery/modules/order/orderstorage"
 	"200lab/food-delivery/modules/ordertracking/ordertrackingbiz"
 	"200lab/food-delivery/modules/ordertracking/ordertrackingstorage"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CancelOrder(appCtx component.AppContext) gin.HandlerFunc {
+func GetOrderTracking(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := c.MustGet(common.CurrentUser).(common.Requester)
 
@@ -21,13 +20,15 @@ func CancelOrder(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := ordertrackingstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		orderStore := orderstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := ordertrackingbiz.NewCancelOrderBiz(store, orderStore)
+		biz := ordertrackingbiz.NewGetOrderTrackingBiz(store)
 
-		if err = biz.CancelOrderStore(c.Request.Context(), user.GetUserId(), int(uid.GetLocalID())); err != nil {
+		orderTracking, err := biz.GetOrderTracking(c.Request.Context(), user.GetUserId(), int(uid.GetLocalID()))
+		if err != nil {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		orderTracking.GenUID(common.DbTypeOrderTracking)
+
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(orderTracking))
 	}
 }
