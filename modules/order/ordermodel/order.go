@@ -3,7 +3,6 @@ package ordermodel
 import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/cart/cartmodel"
-	"200lab/food-delivery/modules/ordertracking/ordertrackingmodel"
 	"errors"
 )
 
@@ -32,12 +31,6 @@ type OrderUpdate struct {
 type DataPublish struct {
 	UserId  int
 	FoodIds []int
-	OrderId int
-	State   ordertrackingmodel.OrderState
-}
-
-func (d DataPublish) GetOrderId() int {
-	return d.OrderId
 }
 
 func (d DataPublish) GetFoodIds() []int {
@@ -46,10 +39,6 @@ func (d DataPublish) GetFoodIds() []int {
 
 func (d DataPublish) GetUserId() int {
 	return d.UserId
-}
-
-func (d DataPublish) GetState() ordertrackingmodel.OrderState {
-	return d.State
 }
 
 func (Order) TableName() string {
