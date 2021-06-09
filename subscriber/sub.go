@@ -52,7 +52,6 @@ func (engine *consumerEngine) Start() error {
 		common.TopicCreateOrder,
 		true,
 		RunDeleteCartAfterCreateOrder(engine.appCtx),
-		RunCreateOrderTrackingAfterCreateOrder(engine.appCtx),
 	)
 
 	return nil

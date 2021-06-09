@@ -4,13 +4,12 @@ import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/food/foodmodel"
 	"200lab/food-delivery/modules/order/ordermodel"
-	"200lab/food-delivery/modules/ordertracking/ordertrackingmodel"
 	"200lab/food-delivery/pubsub"
 	"context"
 )
 
 type CreateOrderStore interface {
-	CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) (int, error)
+	CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) error
 }
 
 type GetFoodsStore interface {
@@ -83,8 +82,7 @@ func (biz *createOrderBiz) CreateOrder(ctx context.Context, userId int, data *or
 		}
 	}
 
-	orderId, err := biz.store.CreateOrder(ctx, &order, orderDetails)
-	if err != nil {
+	if err = biz.store.CreateOrder(ctx, &order, orderDetails); err != nil {
 		return common.ErrCannotCreateEntity(ordermodel.EntityName, err)
 	}
 
@@ -95,11 +93,10 @@ func (biz *createOrderBiz) CreateOrder(ctx context.Context, userId int, data *or
 	for i := range foods {
 		foodIds[i] = foods[i].Id
 	}
+
 	biz.pubsub.Publish(ctx, common.TopicCreateOrder, pubsub.NewMessage(ordermodel.DataPublish{
 		UserId:  userId,
 		FoodIds: foodIds,
-		OrderId: orderId,
-		State:   ordertrackingmodel.Preparing,
 	}))
 
 	return nil

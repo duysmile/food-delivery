@@ -3,15 +3,16 @@ package orderstorage
 import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/order/ordermodel"
+	"200lab/food-delivery/modules/ordertracking/ordertrackingmodel"
 	"context"
 )
 
-func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) (int, error) {
+func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, orderDetails []ordermodel.OrderDetail) error {
 	db := s.db.Begin()
 
 	if err := db.Create(order).Error; err != nil {
 		db.Rollback()
-		return 0, common.ErrDB(err)
+		return common.ErrDB(err)
 	}
 
 	for i := range orderDetails {
@@ -20,13 +21,21 @@ func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, ord
 
 	if err := db.Create(orderDetails).Error; err != nil {
 		db.Rollback()
-		return 0, common.ErrDB(err)
+		return common.ErrDB(err)
+	}
+
+	if err := db.Create(&ordertrackingmodel.OrderTrackingCreate{
+		OrderId: order.Id,
+		State:   ordertrackingmodel.Preparing,
+	}).Error; err != nil {
+		db.Rollback()
+		return common.ErrDB(err)
 	}
 
 	if err := db.Commit().Error; err != nil {
 		db.Rollback()
-		return 0, common.ErrDB(err)
+		return common.ErrDB(err)
 	}
 
-	return order.Id, nil
+	return nil
 }
