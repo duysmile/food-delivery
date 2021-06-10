@@ -7,6 +7,7 @@ const (
 	DbTypeUserAddress   = 4
 	DbTypeOrder         = 5
 	DbTypeOrderTracking = 6
+	DbTypeCategory      = 6
 )
 
 const CurrentUser = "user"
