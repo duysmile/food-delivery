@@ -132,8 +132,12 @@ func runService(
 	{
 		orders.GET("", middleware.RequireAuth(appCtx), ginorder.ListOrder(appCtx))
 		orders.POST("", middleware.RequireAuth(appCtx), ginorder.CreateOrder(appCtx))
-		orders.GET("/:id/order-trackings", middleware.RequireAuth(appCtx), ginordertracking.GetOrderTracking(appCtx))
-		orders.PATCH("/:id/order-trackings/cancel", middleware.RequireAuth(appCtx), ginordertracking.CancelOrder(appCtx))
+		orders.GET("/:id/order-trackings", middleware.RequireAuth(appCtx), ginordertracking.ListOrderTracking(appCtx))
+	}
+
+	orderTrackings := v1.Group("/order-trackings")
+	{
+		orderTrackings.POST("", middleware.RequireAuth(appCtx), ginordertracking.CreateOrderTracking(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

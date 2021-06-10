@@ -5,26 +5,33 @@ import (
 	"200lab/food-delivery/component"
 	"200lab/food-delivery/modules/order/orderstorage"
 	"200lab/food-delivery/modules/ordertracking/ordertrackingbiz"
+	"200lab/food-delivery/modules/ordertracking/ordertrackingmodel"
 	"200lab/food-delivery/modules/ordertracking/ordertrackingstorage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CancelOrder(appCtx component.AppContext) gin.HandlerFunc {
+func CreateOrderTracking(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := c.MustGet(common.CurrentUser).(common.Requester)
 
-		uid, err := common.FromBase58(c.Param("id"))
-		if err != nil {
+		var data ordertrackingmodel.OrderTrackingCreate
+		if err := c.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))
+		}
+
+		if uid, err := common.FromBase58(data.FakeOrderId.String()); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		} else {
+			data.OrderId = int(uid.GetLocalID())
 		}
 
 		store := ordertrackingstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		orderStore := orderstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := ordertrackingbiz.NewCancelOrderBiz(store, orderStore)
+		biz := ordertrackingbiz.NewCreateOrderBiz(store, orderStore)
 
-		if err = biz.CancelOrderStore(c.Request.Context(), user.GetUserId(), int(uid.GetLocalID())); err != nil {
+		if err := biz.CreateOrderTracking(c.Request.Context(), user.GetUserId(), &data); err != nil {
 			panic(err)
 		}
 

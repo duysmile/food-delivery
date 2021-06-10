@@ -3,7 +3,6 @@ package orderstorage
 import (
 	"200lab/food-delivery/common"
 	"200lab/food-delivery/modules/order/ordermodel"
-	"200lab/food-delivery/modules/ordertracking/ordertrackingmodel"
 	"context"
 )
 
@@ -20,14 +19,6 @@ func (s *sqlStore) CreateOrder(ctx context.Context, order *ordermodel.Order, ord
 	}
 
 	if err := db.Create(orderDetails).Error; err != nil {
-		db.Rollback()
-		return common.ErrDB(err)
-	}
-
-	if err := db.Create(&ordertrackingmodel.OrderTrackingCreate{
-		OrderId: order.Id,
-		State:   ordertrackingmodel.Preparing,
-	}).Error; err != nil {
 		db.Rollback()
 		return common.ErrDB(err)
 	}
