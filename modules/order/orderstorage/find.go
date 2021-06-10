@@ -12,7 +12,10 @@ func (s *sqlStore) GetOrder(ctx context.Context, id int, condition map[string]in
 	db := s.db.Table(ordermodel.Order{}.TableName()).Where("status in (?)", 1)
 
 	var data ordermodel.Order
-	if err := db.Where(condition).First(&data).Error; err != nil {
+	if condition != nil {
+		db = db.Where(condition)
+	}
+	if err := db.Where("id = ?", id).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.RecordNotFound
 		}

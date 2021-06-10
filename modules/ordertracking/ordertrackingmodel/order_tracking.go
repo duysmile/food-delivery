@@ -11,8 +11,9 @@ type OrderTracking struct {
 }
 
 type OrderTrackingCreate struct {
-	OrderId int        `json:"order_id" gorm:"column:order_id;"`
-	State   OrderState `json:"-" gorm:"column:state;"`
+	FakeOrderId *common.UID `json:"order_id" gorm:"-"`
+	OrderId     int         `json:"-" gorm:"column:order_id;"`
+	State       OrderState  `json:"state" gorm:"column:state;"`
 }
 
 type OrderTrackingUpdate struct {
