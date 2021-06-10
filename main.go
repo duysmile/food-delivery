@@ -5,6 +5,7 @@ import (
 	"200lab/food-delivery/component/uploadprovider"
 	"200lab/food-delivery/middleware"
 	"200lab/food-delivery/modules/cart/carttransport/gincart"
+	"200lab/food-delivery/modules/category/categorytransport/gincategory"
 	"200lab/food-delivery/modules/food/foodtransport/ginfood"
 	"200lab/food-delivery/modules/foodlike/foodtransport/ginfoodlike"
 	"200lab/food-delivery/modules/order/ordertransport/ginorder"
@@ -138,6 +139,12 @@ func runService(
 	orderTrackings := v1.Group("/order-trackings")
 	{
 		orderTrackings.POST("", middleware.RequireAuth(appCtx), ginordertracking.CreateOrderTracking(appCtx))
+	}
+
+	categories := v1.Group("/categories")
+	{
+		categories.POST("", middleware.RequireAuth(appCtx), gincategory.CreateCategory(appCtx))
+		categories.GET("", gincategory.ListCategory(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
