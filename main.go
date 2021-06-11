@@ -147,6 +147,7 @@ func runService(
 		categories.GET("", gincategory.ListCategory(appCtx))
 		// TODO: add middleware check if admin
 		categories.DELETE("/:id", middleware.RequireAuth(appCtx), gincategory.DeleteCategory(appCtx))
+		categories.PATCH("/:id", middleware.RequireAuth(appCtx), gincategory.UpdateCategory(appCtx))
 	}
 
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
