@@ -23,7 +23,22 @@ type Restaurant struct {
 	LikeCount        int                `json:"liked_count" gorm:"column:liked_count;"` // computed field
 }
 
+type SimpleRestaurant struct {
+	Id               int     `json:"-" gorm:"column:id;"`
+	OwnerId          int     `json:"-" gorm:"column:owner_id;"`
+	Name             string  `json:"name" gorm:"column:name;"`
+	Addr             string  `json:"address" gorm:"column:addr;"`
+	CityId           int     `json:"city_id" gorm:"column:city_id;"`
+	Lat              float32 `json:"lat" gorm:"column:lat;"`
+	Long             float32 `json:"lng" gorm:"column:lng;"`
+	ShippingFeePerKm float64 `json:"shipping_fee_per_km" gorm:"column:shipping_fee_per_km;"`
+}
+
 func (Restaurant) TableName() string {
+	return "restaurants"
+}
+
+func (SimpleRestaurant) TableName() string {
 	return "restaurants"
 }
 

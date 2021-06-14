@@ -24,6 +24,15 @@ func UpdateFood(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		if foodData.FakeCategoryId != "" {
+			if uid, err := common.FromBase58(foodData.FakeCategoryId); err != nil {
+				panic(common.ErrInvalidRequest(err))
+			} else {
+				categoryId := int(uid.GetLocalID())
+				foodData.CategoryId = &categoryId
+			}
+		}
+
 		store := foodstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		biz := foodbiz.NewUpdateFoodBiz(store)
 
