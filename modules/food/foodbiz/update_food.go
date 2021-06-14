@@ -27,6 +27,10 @@ func (biz *updateFoodBiz) UpdateFood(ctx context.Context, userId int, id int, da
 		return common.ErrCannotUpdateEntity(foodmodel.EntityName, err)
 	}
 
+	if food.Restaurant == nil {
+		return common.ErrEntityNotFound(foodmodel.EntityName, errors.New("food not belong any restaurant"))
+	}
+
 	ownerId := food.Restaurant.OwnerId
 	if ownerId != userId {
 		return common.ErrNoPermission(errors.New("user not own food"))

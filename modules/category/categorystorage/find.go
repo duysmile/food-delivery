@@ -8,7 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func (s *sqlStore) GetCategoryByCondition(ctx context.Context, condition map[string]interface{}) (*categorymodel.Category, error) {
+func (s *sqlStore) GetCategoryByCondition(
+	ctx context.Context,
+	condition map[string]interface{},
+) (*categorymodel.Category, error) {
 	db := s.db.Table(categorymodel.Category{}.TableName()).Where("status in (?)", 1)
 
 	var data categorymodel.Category
